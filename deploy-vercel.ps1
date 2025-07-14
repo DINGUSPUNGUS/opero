@@ -23,10 +23,10 @@ Write-Host "✅ FastAPI routes configured" -ForegroundColor Green
 Write-Host ""
 
 Write-Host "🎯 Deployment Options:" -ForegroundColor Magenta
-Write-Host "1. Deploy to Vercel (Recommended)"
-Write-Host "2. Deploy to Railway"
-Write-Host "3. Deploy to Render"
-Write-Host "4. Exit"
+Write-Host "1. Deploy to Vercel (Recommended)" -ForegroundColor White
+Write-Host "2. Deploy to Railway" -ForegroundColor White
+Write-Host "3. Deploy to Render" -ForegroundColor White
+Write-Host "4. Exit" -ForegroundColor White
 Write-Host ""
 
 $choice = Read-Host "Select deployment option (1-4)"
@@ -34,10 +34,10 @@ $choice = Read-Host "Select deployment option (1-4)"
 switch ($choice) {
     1 {
         Write-Host "🚀 Deploying to Vercel..." -ForegroundColor Cyan
-        Write-Host "This will:"
-        Write-Host "  - Login to Vercel (if needed)"
-        Write-Host "  - Deploy your FastAPI backend"
-        Write-Host "  - Provide you with a live URL"
+        Write-Host "This will:" -ForegroundColor White
+        Write-Host "  - Login to Vercel (if needed)" -ForegroundColor White
+        Write-Host "  - Deploy your FastAPI backend" -ForegroundColor White
+        Write-Host "  - Provide you with a live URL" -ForegroundColor White
         Write-Host ""
         
         $confirm = Read-Host "Continue? (y/N)"
@@ -49,20 +49,20 @@ switch ($choice) {
     }
     2 {
         Write-Host "🚂 Railway Deployment Instructions:" -ForegroundColor Cyan
-        Write-Host "1. Install Railway CLI: npm install -g @railway/cli"
-        Write-Host "2. Login: railway login"
-        Write-Host "3. Initialize: railway init"
-        Write-Host "4. Deploy: railway up"
-        Write-Host ""
-        Write-Host "Railway is excellent for FastAPI with database support!"
+        Write-Host "1. Install Railway CLI: npm install -g @railway/cli" -ForegroundColor White
+        Write-Host "2. Login: railway login" -ForegroundColor White
+        Write-Host "3. Initialize: railway init" -ForegroundColor White
+        Write-Host "4. Deploy: railway up" -ForegroundColor White
+        Write-Host "" -ForegroundColor White
+        Write-Host "Railway is excellent for FastAPI with database support!" -ForegroundColor Green
     }
     3 {
         Write-Host "🎨 Render Deployment Instructions:" -ForegroundColor Cyan
-        Write-Host "1. Go to https://render.com"
-        Write-Host "2. Connect your GitHub repository"
-        Write-Host "3. Choose 'Web Service'"
-        Write-Host "4. Build Command: pip install -r requirements.txt"
-        Write-Host "5. Start Command: uvicorn app.main:app --host 0.0.0.0 --port `$PORT"
+        Write-Host "1. Go to https://render.com" -ForegroundColor White
+        Write-Host "2. Connect your GitHub repository" -ForegroundColor White
+        Write-Host "3. Choose 'Web Service'" -ForegroundColor White
+        Write-Host "4. Build Command: pip install -r requirements.txt" -ForegroundColor White
+        Write-Host "5. Start Command: uvicorn app.main:app --host 0.0.0.0 --port `$PORT" -ForegroundColor White
     }
     4 {
         Write-Host "Goodbye! 👋" -ForegroundColor Yellow
@@ -75,8 +75,8 @@ switch ($choice) {
 
 Write-Host ""
 Write-Host "📞 Need Help?" -ForegroundColor Cyan
-Write-Host "- Check VERCEL_FIX.md for detailed instructions"
-Write-Host "- Test locally: python api/index.py"
-Write-Host "- View documentation: https://vercel.com/docs/functions/serverless-functions/runtimes/python"
+Write-Host "- Check VERCEL_FIX.md for detailed instructions" -ForegroundColor White
+Write-Host "- Test locally: python api/index.py" -ForegroundColor White
+Write-Host "- View documentation: https://vercel.com/docs/functions/serverless-functions/runtimes/python" -ForegroundColor White
 Write-Host ""
 Write-Host "🎉 Happy deploying!" -ForegroundColor Green
