@@ -1,0 +1,58 @@
+# Development Docker Compose
+version: '3.8'
+
+services:
+  # Development API with hot-reload
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: opero-dev
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - DATABASE_URL=postgresql+asyncpg://opero_user:devpassword@db:5432/opero_dev
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - .:/app
+      - /app/__pycache__
+      - /app/.venv
+    depends_on:
+      - db
+      - redis
+    networks:
+      - opero-dev
+    command: ["python", "run_server.py"]
+
+  # PostgreSQL for development
+  db:
+    image: postgres:15-alpine
+    container_name: opero-dev-db
+    environment:
+      - POSTGRES_DB=opero_dev
+      - POSTGRES_USER=opero_user
+      - POSTGRES_PASSWORD=devpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    networks:
+      - opero-dev
+
+  # Redis for development
+  redis:
+    image: redis:7-alpine
+    container_name: opero-dev-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - opero-dev
+
+networks:
+  opero-dev:
+    driver: bridge
+
+volumes:
+  postgres_dev_data:

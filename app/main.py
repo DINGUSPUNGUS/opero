@@ -3,9 +3,13 @@ FastAPI application entry point.
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 from app.routes.auth import router as auth_router
 from app.routes.contacts import router as contacts_router
 from app.routes.agent import router as agent_router
+from app.routes.monitoring import router as monitoring_router
 
 # Create FastAPI app
 app = FastAPI(
@@ -29,6 +33,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(contacts_router)
 app.include_router(agent_router)
+app.include_router(monitoring_router)
 
 @app.get("/")
 async def root():
@@ -39,6 +44,15 @@ async def root():
         "docs": "/docs",
         "tagline": "Streamline. Automate. Excel."
     }
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard():
+    """Serve the dashboard HTML page."""
+    dashboard_path = Path(__file__).parent.parent / "dashboard.html"
+    if dashboard_path.exists():
+        return HTMLResponse(content=dashboard_path.read_text(encoding='utf-8'))
+    else:
+        return HTMLResponse(content="<h1>Dashboard not found</h1>", status_code=404)
 
 @app.get("/health")
 async def health_check():
