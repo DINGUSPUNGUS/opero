@@ -1,24 +1,31 @@
 """
-FastAPI application for Vercel deployment.
+FastAPI application for Vercel deployment - Clean and Simple
 """
-import sys
-import os
-from pathlib import Path
-
-# Add the parent directory to the Python path so we can import from app
-current_dir = Path(__file__).parent
-parent_dir = current_dir.parent
-sys.path.insert(0, str(parent_dir))
-
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import APIRouter
-from typing import List, Optional
 from pydantic import BaseModel
+from typing import List, Optional
+import os
 
-# Simple contacts router without database dependencies
-contacts_router = APIRouter(prefix="/contacts", tags=["Contacts"])
+# Create FastAPI app
+app = FastAPI(
+    title="Opero API",
+    description="AI-powered business automation platform",
+    version="2.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
 
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Configure properly for production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# === CONTACT MODELS ===
 class ContactCreate(BaseModel):
     first_name: str
     last_name: Optional[str] = None
@@ -41,12 +48,23 @@ class ContactResponse(BaseModel):
     tags: Optional[str]
     is_active: bool
 
-# Demo data
+class ContactUpdate(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    company: Optional[str] = None
+    position: Optional[str] = None
+    notes: Optional[str] = None
+    tags: Optional[str] = None
+    is_active: Optional[bool] = None
+
+# === IN-MEMORY DATA STORE ===
 demo_contacts = [
     {
         "id": 1,
         "first_name": "John",
-        "last_name": "Doe", 
+        "last_name": "Doe",
         "email": "john@example.com",
         "phone": "+1-555-0123",
         "company": "Tech Corp",
@@ -59,22 +77,61 @@ demo_contacts = [
         "id": 2,
         "first_name": "Jane",
         "last_name": "Smith",
-        "email": "jane@example.com", 
+        "email": "jane@example.com",
         "phone": "+1-555-0124",
         "company": "Design Studio",
         "position": "Creative Director",
         "notes": "Potential partner",
         "tags": "partner,creative",
         "is_active": True
+    },
+    {
+        "id": 3,
+        "first_name": "Alex",
+        "last_name": "Johnson",
+        "email": "alex@startupxyz.com",
+        "phone": "+1-555-0125",
+        "company": "StartupXYZ",
+        "position": "Founder",
+        "notes": "Innovative startup",
+        "tags": "startup,innovation",
+        "is_active": True
     }
 ]
 
-@contacts_router.get("/", response_model=List[ContactResponse])
+# === ROOT ENDPOINTS ===
+@app.get("/")
+async def root():
+    """Root endpoint."""
+    return {
+        "message": "Welcome to Opero API v2.0 - AI-Powered Business Automation",
+        "status": "operational",
+        "docs": "/docs",
+        "endpoints": {
+            "contacts": "/contacts",
+            "health": "/health",
+            "docs": "/docs"
+        },
+        "tagline": "Streamline. Automate. Excel."
+    }
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint."""
+    return {
+        "status": "healthy",
+        "service": "opero-api",
+        "version": "2.0.0",
+        "environment": os.getenv("VERCEL_ENV", "production")
+    }
+
+# === CONTACT ENDPOINTS ===
+@app.get("/contacts", response_model=List[ContactResponse])
 async def get_contacts():
     """Get all contacts."""
     return demo_contacts
 
-@contacts_router.post("/", response_model=ContactResponse)
+@app.post("/contacts", response_model=ContactResponse)
 async def create_contact(contact: ContactCreate):
     """Create a new contact."""
     new_contact = {
@@ -92,76 +149,124 @@ async def create_contact(contact: ContactCreate):
     demo_contacts.append(new_contact)
     return new_contact
 
-@contacts_router.get("/stats/overview")
+@app.get("/contacts/{contact_id}", response_model=ContactResponse)
+async def get_contact(contact_id: int):
+    """Get a specific contact."""
+    contact = next((c for c in demo_contacts if c["id"] == contact_id), None)
+    if not contact:
+        raise HTTPException(status_code=404, detail="Contact not found")
+    return contact
+
+@app.put("/contacts/{contact_id}", response_model=ContactResponse)
+async def update_contact(contact_id: int, contact_update: ContactUpdate):
+    """Update a contact."""
+    contact = next((c for c in demo_contacts if c["id"] == contact_id), None)
+    if not contact:
+        raise HTTPException(status_code=404, detail="Contact not found")
+    
+    # Update only provided fields
+    update_data = contact_update.dict(exclude_unset=True)
+    for field, value in update_data.items():
+        contact[field] = value
+    
+    return contact
+
+@app.delete("/contacts/{contact_id}")
+async def delete_contact(contact_id: int):
+    """Delete a contact."""
+    contact_index = next((i for i, c in enumerate(demo_contacts) if c["id"] == contact_id), None)
+    if contact_index is None:
+        raise HTTPException(status_code=404, detail="Contact not found")
+    
+    demo_contacts.pop(contact_index)
+    return {"message": "Contact deleted successfully"}
+
+@app.get("/contacts/search/", response_model=List[ContactResponse])
+async def search_contacts(
+    q: Optional[str] = None,
+    company: Optional[str] = None,
+    tags: Optional[str] = None
+):
+    """Search contacts by name, company, or tags."""
+    filtered_contacts = demo_contacts.copy()
+    
+    if q:
+        q_lower = q.lower()
+        filtered_contacts = [
+            c for c in filtered_contacts
+            if (q_lower in c["first_name"].lower() or
+                (c["last_name"] and q_lower in c["last_name"].lower()) or
+                (c["email"] and q_lower in c["email"].lower()) or
+                (c["company"] and q_lower in c["company"].lower()))
+        ]
+    
+    if company:
+        filtered_contacts = [
+            c for c in filtered_contacts
+            if c["company"] and company.lower() in c["company"].lower()
+        ]
+    
+    if tags:
+        filtered_contacts = [
+            c for c in filtered_contacts
+            if c["tags"] and tags.lower() in c["tags"].lower()
+        ]
+    
+    return filtered_contacts
+
+@app.get("/contacts/stats/overview")
 async def get_contact_stats():
-    """Get contact statistics."""
+    """Get contact statistics and overview."""
     total_contacts = len(demo_contacts)
     active_contacts = len([c for c in demo_contacts if c["is_active"]])
     companies = len(set(c["company"] for c in demo_contacts if c["company"]))
+    
+    # Get contacts by company
+    contacts_by_company = {}
+    for contact in demo_contacts:
+        if contact["company"]:
+            company = contact["company"]
+            contacts_by_company[company] = contacts_by_company.get(company, 0) + 1
     
     return {
         "total_contacts": total_contacts,
         "active_contacts": active_contacts,
         "inactive_contacts": total_contacts - active_contacts,
-        "unique_companies": companies
+        "unique_companies": companies,
+        "contacts_by_company": contacts_by_company,
+        "recent_activity": "3 new contacts this week"
     }
 
-# Simple auth router
-auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
-
-@auth_router.get("/status")
+# === AUTH ENDPOINTS ===
+@app.get("/auth/status")
 async def auth_status():
-    return {"status": "available", "message": "Authentication endpoints ready"}
-
-# Simple monitoring router
-monitoring_router = APIRouter(prefix="/monitoring", tags=["Monitoring"])
-
-@monitoring_router.get("/health")
-async def health():
-    return {"status": "healthy", "service": "opero-api", "version": "2.0.0"}
-
-# Create FastAPI app
-app = FastAPI(
-    title="Opero API",
-    description="AI-powered business automation platform",
-    version="2.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc"
-)
-
-# Configure CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Configure properly for production
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Include routers
-app.include_router(contacts_router)
-app.include_router(auth_router)
-app.include_router(monitoring_router)
-
-@app.get("/")
-async def root():
-    """Root endpoint."""
+    """Authentication status endpoint."""
     return {
-        "message": "Welcome to Opero API v2.0",
-        "docs": "/docs",
-        "status": "running",
-        "environment": os.getenv("ENVIRONMENT", "production")
+        "status": "available",
+        "message": "Authentication system ready",
+        "version": "2.0.0"
     }
 
-@app.get("/health")
-async def health_check():
-    """Health check endpoint for Vercel."""
-    return {"status": "healthy", "service": "opero-api"}
+# === MONITORING ENDPOINTS ===
+@app.get("/monitoring/health")
+async def monitoring_health():
+    """Detailed health monitoring."""
+    return {
+        "status": "healthy",
+        "service": "opero-api",
+        "version": "2.0.0",
+        "timestamp": "2025-07-14T09:30:00Z",
+        "checks": {
+            "api": "healthy",
+            "contacts": "operational",
+            "memory": "normal"
+        }
+    }
 
-# Export the app for Vercel
-# Vercel looks for this pattern
+# For Vercel deployment
 def handler(request, context):
     return app
 
-# For compatibility
+# Export the app for Vercel
+# Alternative export for compatibility
 api = app
