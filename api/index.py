@@ -263,10 +263,10 @@ async def monitoring_health():
         }
     }
 
-# For Vercel deployment
-def handler(request, context):
-    return app
+# ASGI application export for Vercel
+# Vercel expects this specific export pattern
+application = app
 
-# Export the app for Vercel
-# Alternative export for compatibility
+# Alternative exports for compatibility
 api = app
+handler = app
