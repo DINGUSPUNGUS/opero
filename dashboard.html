@@ -3,8 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Opero Dashboard v2.0</title>
+    <title>Opero Dashboard | AI-Powered Business Automation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a6fd8;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --dark: #1f2937;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -12,214 +41,648 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             min-height: 100vh;
-            color: #333;
+            color: var(--gray-800);
+            line-height: 1.6;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 2rem;
         }
         
+        /* Header */
         .header {
             background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-xl);
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
         }
         
         .header h1 {
-            color: #667eea;
-            margin-bottom: 10px;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
         }
         
-        .cards {
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: var(--gray-600);
+            margin-bottom: 1rem;
+        }
+        
+        .header .tagline {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            font-style: italic;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        
+        .status-badge.online {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+        
+        .status-badge.offline {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #991b1b;
+            border: 1px solid #f87171;
+        }
+        
+        .pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        /* Grid Layout */
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
         }
         
+        /* Cards */
         .card {
             background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
         }
         
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
         }
         
-        .card h3 {
-            color: #667eea;
-            margin-bottom: 15px;
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .card-header {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
         
-        .icon {
-            width: 24px;
-            height: 24px;
-        }
-        
-        .btn {
-            background: #667eea;
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
             color: white;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        
+        .card-description {
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.2s;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
             text-decoration: none;
-            display: inline-block;
-            margin: 5px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
         
-        .btn:hover {
-            background: #5a6fd8;
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: var(--shadow);
         }
         
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--gray-200);
+            transform: translateY(-1px);
+        }
+        
+        /* Chat Container */
         .chat-container {
             background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .chat-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
         }
         
         .chat-box {
-            height: 300px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
+            height: 400px;
+            padding: 1.5rem;
             overflow-y: auto;
-            margin-bottom: 15px;
-            background: #f9f9f9;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .chat-input-container {
+            padding: 1.5rem;
+            background: white;
         }
         
         .chat-input {
             display: flex;
-            gap: 10px;
+            gap: 1rem;
+            align-items: center;
         }
         
         .chat-input input {
             flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
         }
         
-        .status {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: bold;
+        .chat-input input:focus {
+            outline: none;
+            border-color: var(--primary);
         }
         
-        .status.online {
-            background: #d4edda;
-            color: #155724;
+        .chat-input input::placeholder {
+            color: var(--gray-400);
         }
         
+        /* Messages */
         .message {
-            margin-bottom: 10px;
-            padding: 8px 12px;
-            border-radius: 8px;
+            margin-bottom: 1rem;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            max-width: 80%;
+            position: relative;
         }
         
         .message.user {
-            background: #e3f2fd;
-            text-align: right;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
         }
         
         .message.agent {
-            background: #f3e5f5;
+            background: white;
+            color: var(--gray-800);
+            border: 1px solid var(--gray-200);
+            border-bottom-left-radius: 4px;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+        
+        /* Metrics */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .metric {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+        }
+        
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--gray-300);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+            
+            .card-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-lg);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+        
+        .toast.error {
+            border-left: 4px solid var(--error);
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Header -->
         <div class="header">
-            <h1>🚀 Opero Dashboard v2.0</h1>
-            <p>AI-Powered Business Automation Platform</p>
-            <span class="status online">API Status: Online</span>
-        </div>
-        
-        <div class="cards">
-            <div class="card">
-                <h3>
-                    👤 Contact Management
-                </h3>
-                <p>Manage your business contacts with AI-powered organization and insights.</p>
-                <a href="http://localhost:8000/docs#/Contacts" class="btn" target="_blank">View Contacts API</a>
-                <button class="btn" onclick="testContacts()">Test Contacts</button>
-            </div>
-            
-            <div class="card">
-                <h3>
-                    🔐 Authentication
-                </h3>
-                <p>Secure authentication system with JWT tokens and user management.</p>
-                <a href="http://localhost:8000/docs#/Authentication" class="btn" target="_blank">View Auth API</a>
-                <button class="btn" onclick="testAuth()">Test Login</button>
-            </div>
-            
-            <div class="card">
-                <h3>
-                    🤖 AI Agent
-                </h3>
-                <p>Intelligent AI assistant for automating business tasks and workflows.</p>
-                <a href="http://localhost:8000/docs#/AI%20Agent" class="btn" target="_blank">View Agent API</a>
-                <button class="btn" onclick="testAgent()">Test Agent</button>
-            </div>
-            
-            <div class="card">
-                <h3>
-                    📊 API Documentation
-                </h3>
-                <p>Complete API documentation with interactive testing interface.</p>
-                <a href="http://localhost:8000/docs" class="btn" target="_blank">Open API Docs</a>
-                <a href="http://localhost:8000/redoc" class="btn" target="_blank">ReDoc</a>
+            <h1><i class="fas fa-rocket"></i> Opero</h1>
+            <p class="subtitle">AI-Powered Business Automation Platform</p>
+            <p class="tagline">"Streamline. Automate. Excel."</p>
+            <div class="status-badge online" id="statusBadge">
+                <div class="pulse"></div>
+                <span>API Status: Connecting...</span>
             </div>
         </div>
         
-        <div class="chat-container">
-            <h3>💬 AI Agent Chat</h3>
-            <div class="chat-box" id="chatBox">
-                <div class="message agent">
-                    👋 Hello! I'm your AI business assistant. I can help you with contacts, emails, scheduling, and more. What would you like to do?
+        <!-- Feature Cards -->
+        <div class="grid">
+            <!-- Contact Management -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="card-title">Contact Management</h3>
+                </div>
+                <p class="card-description">
+                    Manage your business contacts with AI-powered organization, smart search, and comprehensive analytics.
+                </p>
+                <div class="metrics" id="contactMetrics">
+                    <div class="metric">
+                        <div class="metric-value" id="totalContacts">--</div>
+                        <div class="metric-label">Total Contacts</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="activeContacts">--</div>
+                        <div class="metric-label">Active</div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="http://localhost:8000/docs#/Contacts" class="btn btn-primary" target="_blank">
+                        <i class="fas fa-book"></i> API Docs
+                    </a>
+                    <button class="btn btn-secondary" onclick="testContacts()">
+                        <i class="fas fa-flask"></i> Test API
+                    </button>
                 </div>
             </div>
-            <div class="chat-input">
-                <input type="text" id="messageInput" placeholder="Ask me anything..." onkeypress="handleKeyPress(event)">
-                <button class="btn" onclick="sendMessage()">Send</button>
+            
+            <!-- Authentication -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="card-title">Authentication</h3>
+                </div>
+                <p class="card-description">
+                    Secure JWT-based authentication system with role-based access control and session management.
+                </p>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">JWT</div>
+                        <div class="metric-label">Security</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">RBAC</div>
+                        <div class="metric-label">Access Control</div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="http://localhost:8000/docs#/Authentication" class="btn btn-primary" target="_blank">
+                        <i class="fas fa-book"></i> API Docs
+                    </a>
+                    <button class="btn btn-secondary" onclick="testAuth()">
+                        <i class="fas fa-key"></i> Test Login
+                    </button>
+                </div>
+            </div>
+            
+            <!-- AI Agent -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3 class="card-title">AI Agent</h3>
+                </div>
+                <p class="card-description">
+                    Intelligent AI assistant for automating business tasks, generating insights, and streamlining workflows.
+                </p>
+                <div class="metrics" id="agentMetrics">
+                    <div class="metric">
+                        <div class="metric-value" id="agentTasks">--</div>
+                        <div class="metric-label">Tasks Completed</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="agentUptime">--</div>
+                        <div class="metric-label">Success Rate</div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="http://localhost:8000/docs#/AI%20Agent" class="btn btn-primary" target="_blank">
+                        <i class="fas fa-book"></i> API Docs
+                    </a>
+                    <button class="btn btn-secondary" onclick="testAgent()">
+                        <i class="fas fa-magic"></i> Test Agent
+                    </button>
+                </div>
+            </div>
+            
+            <!-- API Documentation -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3 class="card-title">API Documentation</h3>
+                </div>
+                <p class="card-description">
+                    Interactive API documentation with real-time testing capabilities and comprehensive examples.
+                </p>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">15+</div>
+                        <div class="metric-label">Endpoints</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">100%</div>
+                        <div class="metric-label">Coverage</div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="http://localhost:8000/docs" class="btn btn-primary" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> Swagger UI
+                    </a>
+                    <a href="http://localhost:8000/redoc" class="btn btn-secondary" target="_blank">
+                        <i class="fas fa-file-alt"></i> ReDoc
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- AI Chat Interface -->
+        <div class="chat-container">
+            <div class="chat-header">
+                <i class="fas fa-comments"></i>
+                <h3>AI Assistant Chat</h3>
+            </div>
+            <div class="chat-box" id="chatBox">
+                <div class="message agent">
+                    <strong>🤖 Opero AI Assistant</strong><br>
+                    Hello! I'm your AI business assistant. I can help you with contacts, task automation, analytics, and more. What would you like to accomplish today?
+                    <div class="message-time">Just now</div>
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <div class="chat-input">
+                    <input type="text" id="messageInput" placeholder="Ask me anything about your business..." onkeypress="handleKeyPress(event)">
+                    <button class="btn btn-primary" onclick="sendMessage()" id="sendBtn">
+                        <i class="fas fa-paper-plane"></i> Send
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         const API_BASE = 'http://localhost:8000';
+        let isLoading = false;
         
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            checkApiStatus();
+            loadMetrics();
+            setInterval(checkApiStatus, 30000); // Check every 30 seconds
+        });
+        
+        // API Status Check
+        async function checkApiStatus() {
+            const statusBadge = document.getElementById('statusBadge');
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const health = await response.json();
+                
+                statusBadge.className = 'status-badge online';
+                statusBadge.innerHTML = `
+                    <div class="pulse"></div>
+                    <span>API Status: Online (v${health.version})</span>
+                `;
+                console.log('✅ API Health:', health);
+            } catch (error) {
+                statusBadge.className = 'status-badge offline';
+                statusBadge.innerHTML = `
+                    <div class="pulse"></div>
+                    <span>API Status: Offline</span>
+                `;
+                console.error('❌ API not available:', error);
+            }
+        }
+        
+        // Load Metrics
+        async function loadMetrics() {
+            try {
+                // Load contact stats
+                const contactStats = await fetch(`${API_BASE}/contacts/stats/overview`);
+                const stats = await contactStats.json();
+                
+                document.getElementById('totalContacts').textContent = stats.total_contacts;
+                document.getElementById('activeContacts').textContent = stats.active_contacts;
+                
+                // Load agent analytics
+                const agentAnalytics = await fetch(`${API_BASE}/agent/analytics`);
+                const analytics = await agentAnalytics.json();
+                
+                document.getElementById('agentTasks').textContent = analytics.usage_stats.tasks_completed;
+                document.getElementById('agentUptime').textContent = analytics.usage_stats.success_rate;
+                
+            } catch (error) {
+                console.error('Error loading metrics:', error);
+            }
+        }
+        
+        // Test Functions
         async function testContacts() {
+            showToast('Testing contact API...', 'info');
             try {
                 const response = await fetch(`${API_BASE}/contacts/`);
                 const contacts = await response.json();
-                alert(`Found ${contacts.length} contacts! Check the console for details.`);
-                console.log('Contacts:', contacts);
+                showToast(`✅ Found ${contacts.length} contacts!`, 'success');
+                console.log('📇 Contacts:', contacts);
             } catch (error) {
-                alert('Error testing contacts: ' + error.message);
+                showToast('❌ Contact API test failed', 'error');
+                console.error('Contact test error:', error);
             }
         }
         
         async function testAuth() {
+            showToast('Testing authentication...', 'info');
             try {
                 const formData = new FormData();
                 formData.append('username', 'admin');
@@ -230,38 +693,49 @@
                     body: formData
                 });
                 const result = await response.json();
-                alert('Login successful! Token: ' + result.access_token.substring(0, 20) + '...');
-                console.log('Auth result:', result);
+                
+                if (response.ok) {
+                    showToast('🔐 Authentication successful!', 'success');
+                    console.log('🔑 Auth result:', result);
+                } else {
+                    showToast('❌ Authentication failed', 'error');
+                }
             } catch (error) {
-                alert('Error testing auth: ' + error.message);
+                showToast('❌ Authentication test failed', 'error');
+                console.error('Auth test error:', error);
             }
         }
         
         async function testAgent() {
+            showToast('Testing AI agent...', 'info');
             try {
                 const response = await fetch(`${API_BASE}/agent/demo`);
                 const demo = await response.json();
-                alert('Agent demo completed! Check the console for conversation.');
-                console.log('Agent demo:', demo);
+                showToast('🤖 AI agent test completed!', 'success');
+                console.log('🤖 Agent demo:', demo);
             } catch (error) {
-                alert('Error testing agent: ' + error.message);
+                showToast('❌ AI agent test failed', 'error');
+                console.error('Agent test error:', error);
             }
         }
         
+        // Chat Functions
         async function sendMessage() {
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
-            if (!message) return;
+            if (!message || isLoading) return;
             
             const chatBox = document.getElementById('chatBox');
+            const sendBtn = document.getElementById('sendBtn');
             
             // Add user message
-            const userMsg = document.createElement('div');
-            userMsg.className = 'message user';
-            userMsg.textContent = message;
-            chatBox.appendChild(userMsg);
-            
+            addMessage(message, 'user');
             input.value = '';
+            
+            // Show loading
+            isLoading = true;
+            sendBtn.innerHTML = '<div class="loading"></div> Sending...';
+            sendBtn.disabled = true;
             
             try {
                 const response = await fetch(`${API_BASE}/agent/chat`, {
@@ -279,40 +753,68 @@
                 const result = await response.json();
                 
                 // Add agent response
-                const agentMsg = document.createElement('div');
-                agentMsg.className = 'message agent';
-                agentMsg.textContent = '🤖 ' + result.response;
-                chatBox.appendChild(agentMsg);
+                addMessage(result.response, 'agent');
                 
-                chatBox.scrollTop = chatBox.scrollHeight;
+                // Show actions if any
+                if (result.actions && result.actions.length > 0) {
+                    const actionsText = result.actions.map(a => `• ${a.description}`).join('\n');
+                    addMessage(`Actions performed:\n${actionsText}`, 'agent');
+                }
+                
             } catch (error) {
-                const errorMsg = document.createElement('div');
-                errorMsg.className = 'message agent';
-                errorMsg.textContent = '❌ Error: ' + error.message;
-                chatBox.appendChild(errorMsg);
+                addMessage('❌ Sorry, I encountered an error. Please try again.', 'agent');
+                console.error('Chat error:', error);
+            } finally {
+                isLoading = false;
+                sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+                sendBtn.disabled = false;
             }
         }
         
+        function addMessage(text, type) {
+            const chatBox = document.getElementById('chatBox');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const now = new Date().toLocaleTimeString();
+            const icon = type === 'user' ? '👤' : '🤖';
+            
+            messageDiv.innerHTML = `
+                <strong>${icon} ${type === 'user' ? 'You' : 'Opero AI'}</strong><br>
+                ${text.replace(/\n/g, '<br>')}
+                <div class="message-time">${now}</div>
+            `;
+            
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        
         function handleKeyPress(event) {
-            if (event.key === 'Enter') {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
                 sendMessage();
             }
         }
         
-        // Check API status on load
-        window.addEventListener('load', async () => {
-            try {
-                const response = await fetch(`${API_BASE}/health`);
-                const health = await response.json();
-                console.log('API Health:', health);
-            } catch (error) {
-                console.error('API not available:', error);
-                document.querySelector('.status').className = 'status';
-                document.querySelector('.status').textContent = 'API Status: Offline';
-                document.querySelector('.status').style.background = '#f8d7da';
-                document.querySelector('.status').style.color = '#721c24';
-            }
-        });
+        // Toast Notifications
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
     </script>
 </body>
 </html>
